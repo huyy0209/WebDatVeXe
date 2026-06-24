@@ -1,0 +1,28 @@
+@model WebDatVeXe.Models.LienHe
+@{
+    ViewData["Title"] = "Liên hệ";
+}
+<h2 class="mb-3">📞 Liên hệ với chúng tôi</h2>
+<div class="row">
+    <div class="col-md-6">
+        <form asp-action="Index" method="post">
+            @Html.AntiForgeryToken()
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="mb-2"><label asp-for="HoTen" class="form-label"></label><input asp-for="HoTen" class="form-control" /><span asp-validation-for="HoTen" class="text-danger"></span></div>
+            <div class="mb-2"><label asp-for="Email" class="form-label"></label><input asp-for="Email" class="form-control" /><span asp-validation-for="Email" class="text-danger"></span></div>
+            <div class="mb-2"><label asp-for="SoDienThoai" class="form-label"></label><input asp-for="SoDienThoai" class="form-control" /></div>
+            <div class="mb-2"><label asp-for="TieuDe" class="form-label"></label><input asp-for="TieuDe" class="form-control" /><span asp-validation-for="TieuDe" class="text-danger"></span></div>
+            <div class="mb-2"><label asp-for="NoiDung" class="form-label"></label><textarea asp-for="NoiDung" class="form-control" rows="4"></textarea><span asp-validation-for="NoiDung" class="text-danger"></span></div>
+            <button class="btn btn-primary">Gửi liên hệ</button>
+        </form>
+    </div>
+    <div class="col-md-6">
+        <div class="card bg-light"><div class="card-body">
+            <h5>Thông tin liên hệ</h5>
+            <p>🏢 Văn phòng: 123 Đường ABC, Quận 1, TP. HCM</p>
+            <p>☎️ Hotline: 1900 1234</p>
+            <p>✉️ Email: hotro@datvexe.vn</p>
+        </div></div>
+    </div>
+</div>
+@section Scripts { <partial name="_ValidationScriptsPartial" /> }

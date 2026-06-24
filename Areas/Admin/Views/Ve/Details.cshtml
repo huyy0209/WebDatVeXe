@@ -1,0 +1,30 @@
+@model WebDatVeXe.Models.Ve
+@{
+    ViewData["Title"] = "Chi tiết vé " + Model.MaVe;
+}
+<h2 class="mb-3">Chi tiết vé @Model.MaVe</h2>
+<a class="btn btn-secondary mb-3" asp-action="Index">← Danh sách</a>
+<div class="row">
+    <div class="col-md-6">
+        <table class="table">
+            <tr><th>Mã vé</th><td>@Model.MaVe</td></tr>
+            <tr><th>Khách hàng</th><td>@(Model.HoTen ?? Model.KhachHang?.HoTen)</td></tr>
+            <tr><th>SĐT</th><td>@Model.SoDienThoai</td></tr>
+            <tr><th>Email</th><td>@Model.Email</td></tr>
+            <tr><th>Tuyến</th><td>@(Model.ChuyenXe?.TuyenXe?.DiemDi) → @(Model.ChuyenXe?.TuyenXe?.DiemDen)</td></tr>
+            <tr><th>Xe</th><td>@(Model.ChuyenXe?.Xe?.BienSo) (@(Model.ChuyenXe?.Xe?.LoaiXe))</td></tr>
+            <tr><th>Khởi hành</th><td>@(Model.ChuyenXe?.ThoiGianKhoiHanh.ToString("dd/MM/yyyy HH:mm"))</td></tr>
+        </table>
+    </div>
+    <div class="col-md-6">
+        <table class="table">
+            <tr><th>Ghế</th><td>@Model.DanhSachGheCsv</td></tr>
+            <tr><th>Voucher</th><td>@(Model.MaVoucher ?? "—")</td></tr>
+            <tr><th>Giảm</th><td>@Model.SoTienGiam.ToString("N0") đ</td></tr>
+            <tr><th>Tổng tiền</th><td><strong>@Model.TongTien.ToString("N0") đ</strong></td></tr>
+            <tr><th>Thanh toán</th><td>@Model.PhuongThucThanhToan</td></tr>
+            <tr><th>Trạng thái</th><td><span class="badge bg-info">@Model.TrangThai</span></td></tr>
+            <tr><th>Hoá đơn</th><td>@(Model.HoaDon?.MaHoaDon ?? "—")</td></tr>
+        </table>
+    </div>
+</div>

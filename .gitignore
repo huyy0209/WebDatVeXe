@@ -1,0 +1,11 @@
+## .NET / Visual Studio
+bin/
+obj/
+.vs/
+*.user
+appsettings.Development.json
+
+## EF / DB cục bộ
+*.db
+*.db-shm
+*.db-wal

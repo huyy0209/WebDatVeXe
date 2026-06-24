@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Quản trị</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" />
+</head>
+<body>
+
+<aside class="admin-sidebar">
+    <div class="sidebar-brand">
+        <h5>
+            <i class="fa-solid fa-bus"></i>
+            <span>ĐặtVéXe</span>
+            <span class="admin-badge">Admin</span>
+        </h5>
+    </div>
+
+    <nav class="sidebar-nav">
+        <div class="sidebar-group-label">Tổng quan</div>
+        <a class="nav-link" asp-area="Admin" asp-controller="Home" asp-action="Index">
+            <i class="fa-solid fa-chart-pie nav-icon"></i><span>Tổng quan</span>
+        </a>
+
+        <div class="sidebar-group-label">Quản lý</div>
+        <a class="nav-link" asp-area="Admin" asp-controller="TuyenXe" asp-action="Index">
+            <i class="fa-solid fa-route nav-icon"></i><span>Tuyến xe</span>
+        </a>
+        <a class="nav-link" asp-area="Admin" asp-controller="Xe" asp-action="Index">
+            <i class="fa-solid fa-bus nav-icon"></i><span>Xe</span>
+        </a>
+        <a class="nav-link" asp-area="Admin" asp-controller="SoDoGhe" asp-action="Index">
+            <i class="fa-solid fa-table-cells nav-icon"></i><span>Sơ đồ ghế</span>
+        </a>
+        <a class="nav-link" asp-area="Admin" asp-controller="ChuyenXe" asp-action="Index">
+            <i class="fa-regular fa-calendar nav-icon"></i><span>Chuyến xe</span>
+        </a>
+
+        <div class="sidebar-group-label">Kinh doanh</div>
+        <a class="nav-link" asp-area="Admin" asp-controller="Ve" asp-action="Index">
+            <i class="fa-solid fa-ticket nav-icon"></i><span>Vé đã đặt</span>
+        </a>
+        <a class="nav-link" asp-area="Admin" asp-controller="Voucher" asp-action="Index">
+            <i class="fa-solid fa-tags nav-icon"></i><span>Voucher</span>
+        </a>
+        <a class="nav-link" asp-area="Admin" asp-controller="KhachHang" asp-action="Index">
+            <i class="fa-solid fa-users nav-icon"></i><span>Khách hàng</span>
+        </a>
+
+        <div class="sidebar-group-label">Hỗ trợ</div>
+        <a class="nav-link" asp-area="Admin" asp-controller="LienHe" asp-action="Index">
+            <i class="fa-solid fa-envelope nav-icon"></i><span>Liên hệ</span>
+        </a>
+        <a class="nav-link" asp-area="Admin" asp-controller="HoTro" asp-action="Index">
+            <i class="fa-solid fa-headset nav-icon"></i><span>Hỗ trợ</span>
+        </a>
+    </nav>
+
+    <div class="sidebar-footer">
+        <a asp-area="" asp-controller="Home" asp-action="Index"
+           style="color:rgba(255,255,255,.6);font-size:.82rem;font-weight:600;display:flex;align-items:center;gap:8px">
+            <i class="fa-solid fa-arrow-left nav-icon"></i><span>Về trang chủ</span>
+        </a>
+    </div>
+</aside>
+
+<div class="admin-wrapper">
+    <div class="admin-topbar">
+        <h1 class="page-title">@(ViewData["Title"] ?? "Quản trị")</h1>
+        <div class="d-flex align-items-center gap-3">
+            <span style="font-size:.83rem;color:var(--text-muted)">
+                <i class="fa-regular fa-clock me-1"></i>@DateTime.Now.ToString("HH:mm dd/MM/yyyy")
+            </span>
+        </div>
+    </div>
+
+    <div class="admin-content">
+        @if (TempData["Success"] != null)
+        {
+            <div class="alert alert-success d-flex align-items-center gap-2 mb-4">
+                <i class="fa-solid fa-circle-check"></i>@TempData["Success"]
+            </div>
+        }
+        @if (TempData["Error"] != null)
+        {
+            <div class="alert alert-danger d-flex align-items-center gap-2 mb-4">
+                <i class="fa-solid fa-circle-exclamation"></i>@TempData["Error"]
+            </div>
+        }
+        @RenderBody()
+    </div>
+</div>
+
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+@await RenderSectionAsync("Scripts", required: false)
+
+<script>
+var path = window.location.pathname.toLowerCase().split('/');
+document.querySelectorAll('.sidebar-nav .nav-link').forEach(function(link) {
+    var href = (link.getAttribute('href') || '').toLowerCase();
+    if (href && path.some(function(p){ return p && href.includes(p); })) {
+        link.classList.add('active');
+    }
+});
+</script>
+</body>
+</html>

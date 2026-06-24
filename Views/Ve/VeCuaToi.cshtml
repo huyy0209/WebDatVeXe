@@ -1,0 +1,104 @@
+@model IEnumerable<WebDatVeXe.Models.Ve>
+@{
+    ViewData["Title"] = "Vé của tôi";
+}
+
+<div class="container" style="padding-top:32px;padding-bottom:48px">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 style="font-size:1.3rem;font-weight:800;margin-bottom:4px">
+                <i class="fa-solid fa-ticket me-2" style="color:var(--primary)"></i>Vé của tôi
+            </h2>
+            <div class="text-muted" style="font-size:.85rem">Lịch sử đặt vé của bạn</div>
+        </div>
+        <a class="btn btn-primary btn-sm" asp-controller="Home" asp-action="Index">
+            <i class="fa-solid fa-plus me-1"></i>Đặt vé mới
+        </a>
+    </div>
+
+    @if (!Model.Any())
+    {
+        <div class="text-center py-5" style="background:white;border:1.5px solid var(--border);border-radius:var(--radius)">
+            <div style="font-size:3rem;margin-bottom:16px;opacity:.25"><i class="fa-solid fa-ticket"></i></div>
+            <h5 style="font-weight:800;color:var(--text)">Bạn chưa có vé nào</h5>
+            <p class="text-muted" style="font-size:.9rem">Hãy đặt vé ngay để trải nghiệm dịch vụ!</p>
+            <a class="btn btn-primary mt-2" asp-controller="Home" asp-action="Index">
+                <i class="fa-solid fa-search me-1"></i>Tìm chuyến xe
+            </a>
+        </div>
+    }
+    else
+    {
+        @foreach (var v in Model)
+        {
+            var (badgeClass, badgeText, badgeIcon) = v.TrangThai switch {
+                WebDatVeXe.Models.TrangThaiVe.Hold => ("badge-hold", "Chờ thanh toán", "fa-hourglass-half"),
+                WebDatVeXe.Models.TrangThaiVe.Paid => ("badge-paid", "Đã thanh toán", "fa-circle-check"),
+                WebDatVeXe.Models.TrangThaiVe.Completed => ("badge-completed", "Hoàn thành", "fa-flag-checkered"),
+                WebDatVeXe.Models.TrangThaiVe.Cancelled => ("badge-cancelled", "Đã huỷ", "fa-ban"),
+                _ => ("", v.TrangThai.ToString(), "fa-circle")
+            };
+            <div class="ticket-card">
+                <div class="ticket-header">
+                    <div class="ticket-code">
+                        <i class="fa-solid fa-barcode me-1"></i>@v.MaVe
+                    </div>
+                    <span class="badge-status @badgeClass">
+                        <i class="fa-solid @badgeIcon me-1"></i>@badgeText
+                    </span>
+                </div>
+                <div class="ticket-body">
+                    <div class="row align-items-center g-3">
+                        <div class="col-md-4">
+                            <div class="ticket-route">
+                                @v.ChuyenXe?.TuyenXe?.DiemDi
+                                <i class="fa-solid fa-arrow-right mx-1" style="color:var(--primary);font-size:.8rem"></i>
+                                @v.ChuyenXe?.TuyenXe?.DiemDen
+                            </div>
+                            <div class="ticket-meta mt-1">
+                                <i class="fa-regular fa-clock me-1"></i>
+                                @v.ChuyenXe?.ThoiGianKhoiHanh.ToString("HH:mm dd/MM/yyyy")
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="ticket-meta">
+                                <i class="fa-solid fa-couch me-1" style="color:var(--primary)"></i>
+                                Ghế: <strong>@v.DanhSachGheCsv</strong>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div style="font-size:1rem;font-weight:800;color:var(--danger)">@v.TongTien.ToString("N0") đ</div>
+                        </div>
+                        <div class="col-md-3 d-flex gap-2 justify-content-md-end flex-wrap">
+                            <a class="btn btn-sm btn-outline-primary" asp-action="ChiTiet" asp-route-id="@v.Id">
+                                <i class="fa-solid fa-eye me-1"></i>Chi tiết
+                            </a>
+                            @if (v.TrangThai == WebDatVeXe.Models.TrangThaiVe.Paid || v.TrangThai == WebDatVeXe.Models.TrangThaiVe.Completed)
+                            {
+                                <a class="btn btn-sm btn-outline-warning" asp-controller="DanhGia" asp-action="Them" asp-route-chuyenXeId="@v.ChuyenXeId">
+                                    <i class="fa-solid fa-star me-1"></i>Đánh giá
+                                </a>
+                            }
+                            @if (v.TrangThai == WebDatVeXe.Models.TrangThaiVe.Hold)
+                            {
+                                <a class="btn btn-sm btn-success" asp-action="ThanhToan" asp-route-id="@v.Id">
+                                    <i class="fa-solid fa-credit-card me-1"></i>Thanh toán
+                                </a>
+                            }
+                            @if (v.TrangThai != WebDatVeXe.Models.TrangThaiVe.Completed && v.TrangThai != WebDatVeXe.Models.TrangThaiVe.Cancelled)
+                            {
+                                <form asp-action="Huy" method="post" onsubmit="return confirm('Huỷ vé này?')">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="id" value="@v.Id" />
+                                    <button class="btn btn-sm btn-outline-danger">
+                                        <i class="fa-solid fa-xmark me-1"></i>Huỷ
+                                    </button>
+                                </form>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    }
+</div>

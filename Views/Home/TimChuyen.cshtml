@@ -1,0 +1,105 @@
+@model IEnumerable<WebDatVeXe.Models.ChuyenXe>
+@{
+    ViewData["Title"] = "Kết quả tìm chuyến";
+    var diemDi = Context.Request.Query["DiemDi"].ToString();
+    var diemDen = Context.Request.Query["DiemDen"].ToString();
+    var ngayDi = Context.Request.Query["NgayDi"].ToString();
+}
+
+<div class="container" style="padding-top:32px;padding-bottom:48px">
+    <div class="d-flex align-items-center gap-3 mb-4">
+        <a class="btn btn-sm btn-outline-secondary" asp-action="Index">
+            <i class="fa-solid fa-arrow-left me-1"></i>Tìm lại
+        </a>
+        <div>
+            <h2 class="mb-0" style="font-size:1.3rem;font-weight:800">
+                @if (!string.IsNullOrEmpty(diemDi) && !string.IsNullOrEmpty(diemDen))
+                {
+                    <span>@diemDi <i class="fa-solid fa-arrow-right-long mx-2" style="color:var(--primary);font-size:1rem"></i> @diemDen</span>
+                }
+                else { <span>Kết quả tìm kiếm</span> }
+            </h2>
+            @if (!string.IsNullOrEmpty(ngayDi))
+            {
+                <div class="text-muted" style="font-size:.85rem;margin-top:2px">
+                    <i class="fa-regular fa-calendar me-1"></i>@ngayDi
+                    &nbsp;·&nbsp;<strong>@Model.Count()</strong> chuyến tìm thấy
+                </div>
+            }
+        </div>
+    </div>
+
+    @if (!Model.Any())
+    {
+        <div class="text-center py-5">
+            <div style="font-size:3rem;margin-bottom:16px;opacity:.3"><i class="fa-solid fa-bus-simple"></i></div>
+            <h5 style="font-weight:800">Không tìm thấy chuyến phù hợp</h5>
+            <p class="text-muted" style="font-size:.9rem">Vui lòng thử điểm đi/đến hoặc ngày khác.</p>
+            <a class="btn btn-primary mt-2" asp-action="Index">Tìm lại</a>
+        </div>
+    }
+    else
+    {
+        @foreach (var c in Model)
+        {
+            var conTrong = (c.Xe?.TongSoGhe ?? 0) - c.GheDaDat.Count;
+            var isLow = conTrong > 0 && conTrong <= 5;
+            <div class="trip-card">
+                <div class="row align-items-center g-3">
+                    <div class="col-md-3">
+                        <div class="trip-route">
+                            @c.TuyenXe?.DiemDi
+                            <i class="fa-solid fa-arrow-right mx-1" style="color:var(--primary);font-size:.8rem"></i>
+                            @c.TuyenXe?.DiemDen
+                        </div>
+                        <div class="mt-1 d-flex gap-1 flex-wrap">
+                            <span class="trip-meta-tag">@c.Xe?.LoaiXe</span>
+                            <span class="trip-meta-tag">@c.Xe?.BienSo</span>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="trip-time-badge">
+                            <i class="fa-regular fa-clock" style="font-size:.85rem"></i>
+                            @c.ThoiGianKhoiHanh.ToString("HH:mm")
+                        </div>
+                        <div class="text-muted" style="font-size:.82rem;margin-top:2px">
+                            @c.ThoiGianKhoiHanh.ToString("dd/MM/yyyy")
+                        </div>
+                        <div class="text-muted" style="font-size:.78rem;margin-top:2px">
+                            <i class="fa-solid fa-road me-1"></i>@c.TuyenXe?.KhoangCach
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        @if (conTrong > 0)
+                        {
+                            <span class="badge-seats @(isLow ? "low" : "")">
+                                <i class="fa-solid fa-couch me-1" style="font-size:.72rem"></i>Còn @conTrong ghế
+                            </span>
+                        }
+                        else
+                        {
+                            <span class="badge-seats low">Hết ghế</span>
+                        }
+                    </div>
+                    <div class="col-md-2">
+                        <div class="trip-price">@((c.TuyenXe?.GiaVe ?? 0).ToString("N0")) đ</div>
+                        <div class="text-muted" style="font-size:.78rem">/ghế</div>
+                    </div>
+                    <div class="col-md-2 text-md-end">
+                        @if (conTrong > 0)
+                        {
+                            <a class="btn btn-warning btn-sm px-4"
+                               asp-controller="Ve" asp-action="ChonGhe" asp-route-id="@c.Id">
+                                Chọn ghế <i class="fa-solid fa-arrow-right ms-1"></i>
+                            </a>
+                        }
+                        else
+                        {
+                            <button class="btn btn-sm btn-secondary" disabled>Hết ghế</button>
+                        }
+                    </div>
+                </div>
+            </div>
+        }
+    }
+</div>

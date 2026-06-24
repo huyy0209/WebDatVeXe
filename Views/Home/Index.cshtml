@@ -1,0 +1,136 @@
+@model WebDatVeXe.ViewModels.TimChuyenVM
+@{
+    ViewData["Title"] = "Trang chủ";
+    var diem = ViewBag.DanhSachDiem as List<string> ?? new List<string>();
+    var tuyens = ViewBag.TuyenNoiBat as List<WebDatVeXe.Models.TuyenXe> ?? new List<WebDatVeXe.Models.TuyenXe>();
+}
+
+<!-- HERO -->
+<section class="hero">
+    <div class="container text-center position-relative">
+        <h1><i class="fa-solid fa-route me-2"></i>Đặt Vé Xe Trực Tuyến</h1>
+        <p>Nhanh chóng · Tiện lợi · Giá tốt — Hơn 500+ tuyến toàn quốc</p>
+    </div>
+</section>
+
+<!-- SEARCH -->
+<div class="container">
+    <div class="search-card">
+        <form asp-action="TimChuyen" method="get">
+            <div class="row g-3 align-items-end">
+                <div class="col-md-3">
+                    <label class="input-label"><i class="fa-solid fa-location-dot me-1"></i>Điểm đi</label>
+                    <input name="DiemDi" class="form-control" list="dsDiem"
+                           placeholder="VD: TP. Hồ Chí Minh" value="@Model?.DiemDi" />
+                </div>
+                <div class="col-md-1 d-none d-md-flex align-items-center justify-content-center" style="padding-bottom:2px">
+                    <button type="button" onclick="swapDiem()" class="btn btn-sm btn-outline-secondary rounded-circle mt-4" title="Đổi chiều" style="width:36px;height:36px;padding:0">
+                        <i class="fa-solid fa-arrow-right-arrow-left" style="font-size:.8rem"></i>
+                    </button>
+                </div>
+                <div class="col-md-3">
+                    <label class="input-label"><i class="fa-solid fa-location-dot me-1" style="color:var(--danger)"></i>Điểm đến</label>
+                    <input name="DiemDen" class="form-control" list="dsDiem"
+                           placeholder="VD: Đà Lạt" value="@Model?.DiemDen" />
+                </div>
+                <div class="col-md-2">
+                    <label class="input-label"><i class="fa-regular fa-calendar me-1"></i>Ngày đi</label>
+                    <input name="NgayDi" type="date" class="form-control"
+                           value="@Model?.NgayDi?.ToString("yyyy-MM-dd")"
+                           min="@DateTime.Today.ToString("yyyy-MM-dd")" />
+                </div>
+                <div class="col-md-3">
+                    <label class="input-label d-none d-md-block">&nbsp;</label>
+                    <button type="submit" class="btn-search">
+                        <i class="fa-solid fa-magnifying-glass me-2"></i>Tìm chuyến xe
+                    </button>
+                </div>
+            </div>
+            <datalist id="dsDiem">
+                @foreach (var d in diem) { <option value="@d"></option> }
+            </datalist>
+        </form>
+    </div>
+</div>
+
+<!-- WHY US -->
+<div class="container mt-5">
+    <div class="row g-2 text-center">
+        <div class="col-6 col-md-3">
+            <div class="p-3">
+                <div class="mb-2" style="font-size:1.9rem;color:var(--primary)"><i class="fa-solid fa-shield-halved"></i></div>
+                <div style="font-weight:800;font-size:.9rem;">Thanh toán an toàn</div>
+                <div class="text-muted" style="font-size:.8rem;margin-top:3px">MoMo, VNPay, ZaloPay</div>
+            </div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="p-3">
+                <div class="mb-2" style="font-size:1.9rem;color:var(--accent)"><i class="fa-solid fa-bolt"></i></div>
+                <div style="font-weight:800;font-size:.9rem;">Đặt vé siêu tốc</div>
+                <div class="text-muted" style="font-size:.8rem;margin-top:3px">Hoàn tất chỉ 2 phút</div>
+            </div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="p-3">
+                <div class="mb-2" style="font-size:1.9rem;color:var(--success)"><i class="fa-solid fa-tags"></i></div>
+                <div style="font-weight:800;font-size:.9rem;">Voucher ưu đãi</div>
+                <div class="text-muted" style="font-size:.8rem;margin-top:3px">Giảm đến 50% giá vé</div>
+            </div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="p-3">
+                <div class="mb-2" style="font-size:1.9rem;color:var(--danger)"><i class="fa-solid fa-headset"></i></div>
+                <div style="font-weight:800;font-size:.9rem;">Hỗ trợ 24/7</div>
+                <div class="text-muted" style="font-size:.8rem;margin-top:3px">Tư vấn tận tình</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- POPULAR ROUTES -->
+@if (tuyens.Any())
+{
+    <div class="container mt-4 mb-5">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h2 class="section-title mb-0">
+                <i class="fa-solid fa-fire me-2" style="color:var(--accent)"></i>Tuyến phổ biến
+            </h2>
+        </div>
+        <div class="row g-3">
+            @foreach (var t in tuyens)
+            {
+                <div class="col-md-4 col-sm-6">
+                    <div class="route-card">
+                        <div class="route-path">
+                            @t.DiemDi
+                            <i class="fa-solid fa-arrow-right-long"></i>
+                            @t.DiemDen
+                        </div>
+                        <div class="route-meta">
+                            <i class="fa-solid fa-road me-1"></i>@t.KhoangCach
+                        </div>
+                        <div class="route-price">@t.GiaVe.ToString("N0") đ</div>
+                        <a class="btn btn-primary btn-sm w-100"
+                           asp-action="TimChuyen"
+                           asp-route-DiemDi="@t.DiemDi"
+                           asp-route-DiemDen="@t.DiemDen">
+                            Xem chuyến <i class="fa-solid fa-arrow-right ms-1"></i>
+                        </a>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+}
+
+@section Scripts {
+<script>
+function swapDiem() {
+    var di = document.querySelector('[name=DiemDi]');
+    var den = document.querySelector('[name=DiemDen]');
+    var tmp = di.value;
+    di.value = den.value;
+    den.value = tmp;
+}
+</script>
+}

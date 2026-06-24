@@ -1,0 +1,87 @@
+@model IEnumerable<WebDatVeXe.Models.Ve>
+@{
+    ViewData["Title"] = "Vé đã đặt";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h2 style="font-weight:800;margin:0">Vé đã đặt</h2>
+        <p class="text-muted mb-0" style="font-size:.88rem">Quản lý tất cả vé của khách hàng</p>
+    </div>
+</div>
+
+<form method="get" class="mb-4" style="max-width:420px">
+    <div class="input-group">
+        <input name="tuKhoa" value="@ViewBag.TuKhoa" class="form-control" placeholder="Tìm theo mã vé / SĐT / họ tên" />
+        <button class="btn btn-primary" type="submit"><i class="fa-solid fa-search"></i></button>
+    </div>
+</form>
+
+<div style="background:white;border:1.5px solid var(--border);border-radius:var(--radius);overflow:hidden">
+    <div style="overflow-x:auto">
+        <table class="table table-hover mb-0">
+            <thead>
+                <tr>
+                    <th>Mã vé</th>
+                    <th>Khách hàng</th>
+                    <th>Tuyến</th>
+                    <th>Ghế</th>
+                    <th>Tổng tiền</th>
+                    <th>Trạng thái</th>
+                    <th>Ngày đặt</th>
+                    <th style="width:80px"></th>
+                </tr>
+            </thead>
+            <tbody>
+            @foreach (var v in Model)
+            {
+                var (bg, fg) = v.TrangThai switch {
+                    WebDatVeXe.Models.TrangThaiVe.Hold      => ("#fef3c7", "#92400e"),
+                    WebDatVeXe.Models.TrangThaiVe.Pending   => ("#fef3c7", "#92400e"),
+                    WebDatVeXe.Models.TrangThaiVe.Paid      => ("#d1fae5", "#065f46"),
+                    WebDatVeXe.Models.TrangThaiVe.Confirmed => ("#d1fae5", "#065f46"),
+                    WebDatVeXe.Models.TrangThaiVe.Completed => ("#e0e7ff", "#4338ca"),
+                    WebDatVeXe.Models.TrangThaiVe.Cancelled => ("#fee2e2", "#991b1b"),
+                    WebDatVeXe.Models.TrangThaiVe.Expired   => ("#f3f4f6", "#374151"),
+                    _ => ("#f3f4f6", "#374151")
+                };
+                var statusText = v.TrangThai switch {
+                    WebDatVeXe.Models.TrangThaiVe.Hold      => "Chờ TT",
+                    WebDatVeXe.Models.TrangThaiVe.Pending   => "Chờ duyệt",
+                    WebDatVeXe.Models.TrangThaiVe.Paid      => "Đã TT",
+                    WebDatVeXe.Models.TrangThaiVe.Confirmed => "Xác nhận",
+                    WebDatVeXe.Models.TrangThaiVe.Completed => "Hoàn thành",
+                    WebDatVeXe.Models.TrangThaiVe.Cancelled => "Đã huỷ",
+                    WebDatVeXe.Models.TrangThaiVe.Expired   => "Hết hạn",
+                    _ => v.TrangThai.ToString()
+                };
+                <tr>
+                    <td><strong style="color:var(--primary);letter-spacing:.5px">@v.MaVe</strong></td>
+                    <td>
+                        @(v.HoTen ?? v.KhachHang?.HoTen)<br/>
+                        <small style="color:var(--text-muted)">@v.SoDienThoai</small>
+                    </td>
+                    <td>
+                        @(v.ChuyenXe?.TuyenXe?.DiemDi)
+                        <i class="fa-solid fa-arrow-right mx-1" style="color:var(--primary);font-size:.72rem"></i>
+                        @(v.ChuyenXe?.TuyenXe?.DiemDen)
+                    </td>
+                    <td>@v.DanhSachGheCsv</td>
+                    <td style="font-weight:700;color:var(--danger)">@v.TongTien.ToString("N0") đ</td>
+                    <td>
+                        <span style="background:@bg;color:@fg;padding:3px 10px;border-radius:20px;font-size:.76rem;font-weight:700">
+                            @statusText
+                        </span>
+                    </td>
+                    <td style="color:var(--text-muted)">@v.NgayDat.ToString("dd/MM HH:mm")</td>
+                    <td>
+                        <a class="btn btn-sm btn-outline-primary" asp-action="Details" asp-route-id="@v.Id">
+                            <i class="fa-solid fa-eye"></i>
+                        </a>
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+</div>

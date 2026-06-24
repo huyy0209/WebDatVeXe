@@ -1,0 +1,67 @@
+@model IEnumerable<WebDatVeXe.Models.SupportTicket>
+@{
+    ViewData["Title"] = "Hỗ trợ";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h2 style="font-weight:800;margin:0">Hỗ trợ</h2>
+        <p class="text-muted mb-0" style="font-size:.88rem">Yêu cầu hỗ trợ từ khách hàng</p>
+    </div>
+</div>
+
+@foreach (var t in Model)
+{
+    var (bg, fg) = t.TrangThai switch {
+        WebDatVeXe.Models.TrangThaiTicket.Open       => ("#fef3c7", "#92400e"),
+        WebDatVeXe.Models.TrangThaiTicket.InProgress => ("#dbeafe", "#1e40af"),
+        WebDatVeXe.Models.TrangThaiTicket.Resolved   => ("#d1fae5", "#065f46"),
+        WebDatVeXe.Models.TrangThaiTicket.Closed     => ("#f3f4f6", "#374151"),
+        _ => ("#f3f4f6", "#374151")
+    };
+    var statusText = t.TrangThai switch {
+        WebDatVeXe.Models.TrangThaiTicket.Open       => "Chờ xử lý",
+        WebDatVeXe.Models.TrangThaiTicket.InProgress => "Đang xử lý",
+        WebDatVeXe.Models.TrangThaiTicket.Resolved   => "Đã giải quyết",
+        WebDatVeXe.Models.TrangThaiTicket.Closed     => "Đã đóng",
+        _ => t.TrangThai.ToString()
+    };
+    <div style="background:white;border:1.5px solid var(--border);border-radius:var(--radius);padding:20px 24px;margin-bottom:12px">
+        <div class="d-flex justify-content-between align-items-start mb-2">
+            <strong style="font-size:1rem">@t.TieuDe</strong>
+            <span style="background:@bg;color:@fg;padding:3px 10px;border-radius:20px;font-size:.76rem;font-weight:700;white-space:nowrap;margin-left:12px">
+                @statusText
+            </span>
+        </div>
+        <p class="mb-2" style="color:var(--text-muted)">@t.NoiDung</p>
+        <small style="color:var(--text-muted)">
+            <i class="fa-solid fa-user me-1"></i>@t.HoTen
+            <span class="mx-2">•</span>
+            <i class="fa-solid fa-phone me-1"></i>@t.SoDienThoai
+            @if (t.MaVe != null)
+            {
+                <span class="mx-2">•</span>
+                @:<i class="fa-solid fa-ticket me-1"></i>Vé @t.MaVe
+            }
+            <span class="mx-2">•</span>
+            <i class="fa-regular fa-clock me-1"></i>@t.NgayTao.ToString("HH:mm dd/MM/yyyy")
+        </small>
+        @if (!string.IsNullOrEmpty(t.PhanHoi))
+        {
+            <div class="alert alert-success mt-3 mb-0 d-flex align-items-start gap-2">
+                <i class="fa-solid fa-circle-check mt-1"></i>
+                <div><strong>Phản hồi:</strong> @t.PhanHoi</div>
+            </div>
+        }
+        else
+        {
+            <form asp-action="PhanHoi" method="post" class="d-flex mt-3 gap-2">
+                <input type="hidden" name="id" value="@t.Id" />
+                <input name="phanHoi" class="form-control" placeholder="Nhập phản hồi cho khách..." required />
+                <button class="btn btn-primary" style="white-space:nowrap">
+                    <i class="fa-solid fa-paper-plane me-1"></i>Gửi
+                </button>
+            </form>
+        }
+    </div>
+}

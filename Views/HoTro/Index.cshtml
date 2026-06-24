@@ -1,0 +1,48 @@
+@model WebDatVeXe.Models.SupportTicket
+@{
+    ViewData["Title"] = "Hỗ trợ";
+    var ds = ViewBag.DanhSach as List<WebDatVeXe.Models.SupportTicket> ?? new List<WebDatVeXe.Models.SupportTicket>();
+}
+<h2 class="mb-3">🛟 Trung tâm hỗ trợ</h2>
+<div class="row">
+    <div class="col-md-5">
+        <div class="card"><div class="card-body">
+            <h5>Gửi yêu cầu mới</h5>
+            <form asp-action="Gui" method="post">
+                @Html.AntiForgeryToken()
+                <div class="mb-2"><label asp-for="HoTen" class="form-label"></label><input asp-for="HoTen" class="form-control" /><span asp-validation-for="HoTen" class="text-danger"></span></div>
+                <div class="mb-2"><label asp-for="SoDienThoai" class="form-label"></label><input asp-for="SoDienThoai" class="form-control" /><span asp-validation-for="SoDienThoai" class="text-danger"></span></div>
+                <div class="mb-2"><label asp-for="MaVe" class="form-label">Mã vé (nếu có)</label><input asp-for="MaVe" class="form-control" placeholder="VE-..." /></div>
+                <div class="mb-2"><label asp-for="TieuDe" class="form-label"></label><input asp-for="TieuDe" class="form-control" /><span asp-validation-for="TieuDe" class="text-danger"></span></div>
+                <div class="mb-2"><label asp-for="NoiDung" class="form-label"></label><textarea asp-for="NoiDung" class="form-control" rows="3"></textarea><span asp-validation-for="NoiDung" class="text-danger"></span></div>
+                <button class="btn btn-primary">Gửi yêu cầu</button>
+            </form>
+        </div></div>
+    </div>
+    <div class="col-md-7">
+        <h5>Yêu cầu của tôi</h5>
+        @if (!ds.Any())
+        {
+            <p class="text-muted">Chưa có yêu cầu nào.</p>
+        }
+        else
+        {
+            foreach (var t in ds)
+            {
+                <div class="card mb-2"><div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <strong>@t.TieuDe</strong>
+                        <span class="badge bg-secondary">@t.TrangThai</span>
+                    </div>
+                    <p class="mb-1">@t.NoiDung</p>
+                    <small class="text-muted">@t.NgayTao.ToString("dd/MM/yyyy HH:mm") @(t.MaVe != null ? "• Vé " + t.MaVe : "")</small>
+                    @if (!string.IsNullOrEmpty(t.PhanHoi))
+                    {
+                        <div class="alert alert-success mt-2 mb-0"><strong>Phản hồi:</strong> @t.PhanHoi</div>
+                    }
+                </div></div>
+            }
+        }
+    </div>
+</div>
+@section Scripts { <partial name="_ValidationScriptsPartial" /> }

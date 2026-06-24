@@ -1,0 +1,82 @@
+@model IEnumerable<WebDatVeXe.Models.Voucher>
+@{
+    ViewData["Title"] = "Voucher";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h2 style="font-weight:800;margin:0">Voucher</h2>
+        <p class="text-muted mb-0" style="font-size:.88rem">Quản lý mã giảm giá và khuyến mãi</p>
+    </div>
+    <a asp-action="Create" class="btn btn-primary">
+        <i class="fa-solid fa-plus me-1"></i>Thêm voucher
+    </a>
+</div>
+
+<div style="background:white;border:1.5px solid var(--border);border-radius:var(--radius);overflow:hidden">
+    <div style="overflow-x:auto">
+        <table class="table table-hover mb-0">
+            <thead>
+                <tr>
+                    <th>Tên / Mã</th>
+                    <th>Loại giảm</th>
+                    <th>Giá trị giảm</th>
+                    <th>Tối thiểu</th>
+                    <th>Hiệu lực</th>
+                    <th>Đã dùng / SL</th>
+                    <th>Trạng thái</th>
+                    <th style="width:140px"></th>
+                </tr>
+            </thead>
+            <tbody>
+            @foreach (var item in Model)
+            {
+                var (bg, fg) = item.TrangThai switch {
+                    WebDatVeXe.Models.TrangThaiHoatDong.Active      => ("#d1fae5", "#065f46"),
+                    WebDatVeXe.Models.TrangThaiHoatDong.Inactive    => ("#fee2e2", "#991b1b"),
+                    WebDatVeXe.Models.TrangThaiHoatDong.Maintenance => ("#fef3c7", "#92400e"),
+                    _ => ("#f3f4f6", "#374151")
+                };
+                var statusText = item.TrangThai switch {
+                    WebDatVeXe.Models.TrangThaiHoatDong.Active      => "Hoạt động",
+                    WebDatVeXe.Models.TrangThaiHoatDong.Inactive    => "Ngừng",
+                    WebDatVeXe.Models.TrangThaiHoatDong.Maintenance => "Tạm dừng",
+                    _ => item.TrangThai.ToString()
+                };
+                var discountDisplay = item.LoaiGiamGia == WebDatVeXe.Models.LoaiGiamGia.Percentage
+                    ? $"{item.GiaTriGiam:0}%"
+                    : $"{item.GiaTriGiam:N0} đ";
+                <tr>
+                    <td>
+                        <strong>@item.TenVoucher</strong><br/>
+                        <span style="font-family:monospace;font-size:.82rem;color:var(--primary);background:var(--primary-light);padding:1px 6px;border-radius:4px">@item.MaVoucher</span>
+                    </td>
+                    <td>@(item.LoaiGiamGia == WebDatVeXe.Models.LoaiGiamGia.Percentage ? "Phần trăm" : "Cố định")</td>
+                    <td style="font-weight:700;color:var(--danger)">@discountDisplay</td>
+                    <td>@(item.GiaTriToiThieu.ToString("N0")) đ</td>
+                    <td style="font-size:.83rem">
+                        @(item.NgayBatDau.ToString("dd/MM/yy")) –<br/>@(item.NgayHetHan?.ToString("dd/MM/yy") ?? "—")
+                    </td>
+                    <td>@item.DaSuDung / @item.SoLuong</td>
+                    <td>
+                        <span style="background:@bg;color:@fg;padding:3px 10px;border-radius:20px;font-size:.76rem;font-weight:700">
+                            @statusText
+                        </span>
+                    </td>
+                    <td>
+                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-outline-primary me-1">
+                            <i class="fa-solid fa-pen-to-square"></i>
+                        </a>
+                        <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-outline-secondary me-1">
+                            <i class="fa-solid fa-eye"></i>
+                        </a>
+                        <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-outline-danger">
+                            <i class="fa-solid fa-trash"></i>
+                        </a>
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+</div>

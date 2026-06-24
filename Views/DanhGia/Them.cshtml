@@ -1,0 +1,32 @@
+@model WebDatVeXe.Models.DanhGia
+@{
+    ViewData["Title"] = "Đánh giá chuyến";
+    var c = ViewBag.Chuyen as WebDatVeXe.Models.ChuyenXe;
+}
+<h2 class="mb-3">⭐ Đánh giá chuyến đi</h2>
+@if (c != null)
+{
+    <p class="text-muted">@c.TuyenXe?.DiemDi → @c.TuyenXe?.DiemDen • @c.ThoiGianKhoiHanh.ToString("HH:mm dd/MM/yyyy")</p>
+}
+<form asp-action="Them" method="post" style="max-width:520px;">
+    @Html.AntiForgeryToken()
+    <input type="hidden" asp-for="ChuyenXeId" />
+    <div class="mb-3">
+        <label class="form-label">Số sao</label>
+        <select asp-for="SoSao" class="form-select">
+            <option value="5">★★★★★ Rất hài lòng</option>
+            <option value="4">★★★★ Hài lòng</option>
+            <option value="3">★★★ Bình thường</option>
+            <option value="2">★★ Không hài lòng</option>
+            <option value="1">★ Tệ</option>
+        </select>
+    </div>
+    <div class="mb-3">
+        <label asp-for="NhanXet" class="form-label">Nhận xét</label>
+        <textarea asp-for="NhanXet" class="form-control" rows="4" placeholder="Chia sẻ trải nghiệm của bạn..."></textarea>
+        <span asp-validation-for="NhanXet" class="text-danger"></span>
+    </div>
+    <button class="btn btn-primary">Gửi đánh giá</button>
+    <a class="btn btn-secondary" asp-controller="Ve" asp-action="VeCuaToi">Quay lại</a>
+</form>
+@section Scripts { <partial name="_ValidationScriptsPartial" /> }

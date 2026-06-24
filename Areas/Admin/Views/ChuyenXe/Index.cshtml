@@ -1,0 +1,80 @@
+@model IEnumerable<WebDatVeXe.Models.ChuyenXe>
+@{
+    ViewData["Title"] = "Chuyến xe";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h2 style="font-weight:800;margin:0">Chuyến xe</h2>
+        <p class="text-muted mb-0" style="font-size:.88rem">Quản lý lịch trình chuyến xe</p>
+    </div>
+    <a asp-action="Create" class="btn btn-primary">
+        <i class="fa-solid fa-plus me-1"></i>Thêm chuyến
+    </a>
+</div>
+
+<div style="background:white;border:1.5px solid var(--border);border-radius:var(--radius);overflow:hidden">
+    <div style="overflow-x:auto">
+        <table class="table table-hover mb-0">
+            <thead>
+                <tr>
+                    <th>Tuyến</th>
+                    <th>Xe</th>
+                    <th>Khởi hành</th>
+                    <th>Đến nơi</th>
+                    <th>Trạng thái</th>
+                    <th>Ngày tạo</th>
+                    <th style="width:140px"></th>
+                </tr>
+            </thead>
+            <tbody>
+            @foreach (var item in Model)
+            {
+                var (bg, fg) = item.TrangThai switch {
+                    WebDatVeXe.Models.TrangThaiChuyenXe.Active    => ("#d1fae5", "#065f46"),
+                    WebDatVeXe.Models.TrangThaiChuyenXe.Running   => ("#dbeafe", "#1e40af"),
+                    WebDatVeXe.Models.TrangThaiChuyenXe.Completed => ("#e0e7ff", "#4338ca"),
+                    WebDatVeXe.Models.TrangThaiChuyenXe.Cancelled => ("#fee2e2", "#991b1b"),
+                    WebDatVeXe.Models.TrangThaiChuyenXe.Inactive  => ("#f3f4f6", "#374151"),
+                    _ => ("#f3f4f6", "#374151")
+                };
+                var statusText = item.TrangThai switch {
+                    WebDatVeXe.Models.TrangThaiChuyenXe.Active    => "Chờ chạy",
+                    WebDatVeXe.Models.TrangThaiChuyenXe.Running   => "Đang chạy",
+                    WebDatVeXe.Models.TrangThaiChuyenXe.Completed => "Hoàn thành",
+                    WebDatVeXe.Models.TrangThaiChuyenXe.Cancelled => "Đã huỷ",
+                    WebDatVeXe.Models.TrangThaiChuyenXe.Inactive  => "Ngừng",
+                    _ => item.TrangThai.ToString()
+                };
+                <tr>
+                    <td>
+                        <strong>@(item.TuyenXe?.DiemDi ?? "—")</strong>
+                        <i class="fa-solid fa-arrow-right mx-1" style="color:var(--primary);font-size:.72rem"></i>
+                        @(item.TuyenXe?.DiemDen ?? "—")
+                    </td>
+                    <td>@(item.Xe?.BienSo ?? "—")</td>
+                    <td>@item.ThoiGianKhoiHanh.ToString("HH:mm dd/MM/yyyy")</td>
+                    <td>@(item.ThoiGianDen?.ToString("HH:mm dd/MM/yyyy") ?? "—")</td>
+                    <td>
+                        <span style="background:@bg;color:@fg;padding:3px 10px;border-radius:20px;font-size:.76rem;font-weight:700">
+                            @statusText
+                        </span>
+                    </td>
+                    <td style="color:var(--text-muted)">@item.NgayTao.ToString("dd/MM/yyyy")</td>
+                    <td>
+                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-outline-primary me-1">
+                            <i class="fa-solid fa-pen-to-square"></i>
+                        </a>
+                        <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-outline-secondary me-1">
+                            <i class="fa-solid fa-eye"></i>
+                        </a>
+                        <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-outline-danger">
+                            <i class="fa-solid fa-trash"></i>
+                        </a>
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+</div>

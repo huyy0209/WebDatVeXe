@@ -1,0 +1,74 @@
+@model IEnumerable<WebDatVeXe.Models.Xe>
+@{
+    ViewData["Title"] = "Xe";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h2 style="font-weight:800;margin:0">Xe</h2>
+        <p class="text-muted mb-0" style="font-size:.88rem">Quản lý danh sách xe</p>
+    </div>
+    <a asp-action="Create" class="btn btn-primary">
+        <i class="fa-solid fa-plus me-1"></i>Thêm xe
+    </a>
+</div>
+
+<div style="background:white;border:1.5px solid var(--border);border-radius:var(--radius);overflow:hidden">
+    <div style="overflow-x:auto">
+        <table class="table table-hover mb-0">
+            <thead>
+                <tr>
+                    <th>Biển số</th>
+                    <th>Loại xe</th>
+                    <th>Tổng ghế</th>
+                    <th>Số tầng</th>
+                    <th>Sơ đồ ghế</th>
+                    <th>Tuyến xe</th>
+                    <th>Trạng thái</th>
+                    <th style="width:140px"></th>
+                </tr>
+            </thead>
+            <tbody>
+            @foreach (var item in Model)
+            {
+                var (bg, fg) = item.TrangThai switch {
+                    WebDatVeXe.Models.TrangThaiHoatDong.Active      => ("#d1fae5", "#065f46"),
+                    WebDatVeXe.Models.TrangThaiHoatDong.Maintenance => ("#fef3c7", "#92400e"),
+                    WebDatVeXe.Models.TrangThaiHoatDong.Inactive    => ("#fee2e2", "#991b1b"),
+                    _ => ("#f3f4f6", "#374151")
+                };
+                var statusText = item.TrangThai switch {
+                    WebDatVeXe.Models.TrangThaiHoatDong.Active      => "Hoạt động",
+                    WebDatVeXe.Models.TrangThaiHoatDong.Maintenance => "Bảo dưỡng",
+                    WebDatVeXe.Models.TrangThaiHoatDong.Inactive    => "Ngừng",
+                    _ => item.TrangThai.ToString()
+                };
+                <tr>
+                    <td><strong style="color:var(--primary)">@item.BienSo</strong></td>
+                    <td>@item.LoaiXe</td>
+                    <td>@item.TongSoGhe</td>
+                    <td>@item.SoTang</td>
+                    <td>@(item.SoDoGhe?.TenSoDo ?? "—")</td>
+                    <td>@(item.TuyenXe?.DiemDen ?? "—")</td>
+                    <td>
+                        <span style="background:@bg;color:@fg;padding:3px 10px;border-radius:20px;font-size:.76rem;font-weight:700">
+                            @statusText
+                        </span>
+                    </td>
+                    <td>
+                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-outline-primary me-1">
+                            <i class="fa-solid fa-pen-to-square"></i>
+                        </a>
+                        <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-outline-secondary me-1">
+                            <i class="fa-solid fa-eye"></i>
+                        </a>
+                        <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-outline-danger">
+                            <i class="fa-solid fa-trash"></i>
+                        </a>
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+</div>

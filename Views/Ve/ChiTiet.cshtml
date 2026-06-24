@@ -1,0 +1,28 @@
+@model WebDatVeXe.Models.Ve
+@{
+    ViewData["Title"] = "Chi tiết vé";
+}
+<h2 class="mb-3">Vé @Model.MaVe</h2>
+<a class="btn btn-secondary mb-3" asp-action="VeCuaToi">← Vé của tôi</a>
+<div class="card" style="max-width:640px;">
+    <div class="card-body">
+        <div class="d-flex justify-content-between">
+            <h4>@Model.ChuyenXe?.TuyenXe?.DiemDi → @Model.ChuyenXe?.TuyenXe?.DiemDen</h4>
+            <span class="badge bg-info align-self-start">@Model.TrangThai</span>
+        </div>
+        <hr/>
+        <p>🚌 Xe: @Model.ChuyenXe?.Xe?.BienSo (@Model.ChuyenXe?.Xe?.LoaiXe)</p>
+        <p>🕐 Khởi hành: @Model.ChuyenXe?.ThoiGianKhoiHanh.ToString("HH:mm dd/MM/yyyy")</p>
+        <p>💺 Ghế: <strong>@Model.DanhSachGheCsv</strong></p>
+        <p>👤 @Model.HoTen — @Model.SoDienThoai</p>
+        @if (Model.SoTienGiam > 0)
+        {
+            <p>🎟️ Voucher @Model.MaVoucher: -@Model.SoTienGiam.ToString("N0") đ</p>
+        }
+        <h4 class="text-danger">Tổng: @Model.TongTien.ToString("N0") đ</h4>
+        @if (Model.HoaDon != null)
+        {
+            <p class="text-muted">Hoá đơn: @Model.HoaDon.MaHoaDon • @Model.PhuongThucThanhToan</p>
+        }
+    </div>
+</div>

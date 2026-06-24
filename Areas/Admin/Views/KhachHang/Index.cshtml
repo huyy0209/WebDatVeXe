@@ -1,0 +1,62 @@
+@model IEnumerable<WebDatVeXe.Models.ApplicationUser>
+@{
+    ViewData["Title"] = "Khách hàng";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h2 style="font-weight:800;margin:0">Khách hàng</h2>
+        <p class="text-muted mb-0" style="font-size:.88rem">Quản lý tài khoản khách hàng</p>
+    </div>
+</div>
+
+<div style="background:white;border:1.5px solid var(--border);border-radius:var(--radius);overflow:hidden">
+    <div style="overflow-x:auto">
+        <table class="table table-hover mb-0">
+            <thead>
+                <tr>
+                    <th>Họ tên</th>
+                    <th>Email</th>
+                    <th>SĐT</th>
+                    <th>Trạng thái</th>
+                    <th>Ngày tạo</th>
+                    <th style="width:220px"></th>
+                </tr>
+            </thead>
+            <tbody>
+            @foreach (var u in Model)
+            {
+                <tr>
+                    <td><strong>@u.HoTen</strong></td>
+                    <td style="color:var(--text-muted)">@u.Email</td>
+                    <td>@u.PhoneNumber</td>
+                    <td>
+                        @if (u.TrangThai == WebDatVeXe.Models.TrangThaiTaiKhoan.Active)
+                        {
+                            <span style="background:#d1fae5;color:#065f46;padding:3px 10px;border-radius:20px;font-size:.76rem;font-weight:700">Hoạt động</span>
+                        }
+                        else
+                        {
+                            <span style="background:#fee2e2;color:#991b1b;padding:3px 10px;border-radius:20px;font-size:.76rem;font-weight:700">Đã khoá</span>
+                            @if (!string.IsNullOrEmpty(u.LyDoKhoa))
+                            {
+                                <br/><small class="text-muted">@u.LyDoKhoa</small>
+                            }
+                        }
+                    </td>
+                    <td style="color:var(--text-muted)">@u.NgayTao.ToString("dd/MM/yyyy")</td>
+                    <td>
+                        <form asp-action="DoiTrangThai" method="post" class="d-flex align-items-center gap-1">
+                            <input type="hidden" name="id" value="@u.Id" />
+                            <input name="lyDo" class="form-control form-control-sm" placeholder="Lý do khoá" style="width:120px;" />
+                            <button class="btn btn-sm @(u.TrangThai == WebDatVeXe.Models.TrangThaiTaiKhoan.Active ? "btn-outline-danger" : "btn-outline-success")">
+                                @(u.TrangThai == WebDatVeXe.Models.TrangThaiTaiKhoan.Active ? "Khoá" : "Mở khoá")
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+</div>

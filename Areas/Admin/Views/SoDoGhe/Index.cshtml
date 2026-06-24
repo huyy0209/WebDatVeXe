@@ -1,0 +1,54 @@
+@model IEnumerable<WebDatVeXe.Models.SoDoGhe>
+@{
+    ViewData["Title"] = "Sơ đồ ghế";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h2 style="font-weight:800;margin:0">Sơ đồ ghế</h2>
+        <p class="text-muted mb-0" style="font-size:.88rem">Quản lý các mẫu sơ đồ ghế xe</p>
+    </div>
+    <a asp-action="Create" class="btn btn-primary">
+        <i class="fa-solid fa-plus me-1"></i>Thêm sơ đồ
+    </a>
+</div>
+
+<div style="background:white;border:1.5px solid var(--border);border-radius:var(--radius);overflow:hidden">
+    <div style="overflow-x:auto">
+        <table class="table table-hover mb-0">
+            <thead>
+                <tr>
+                    <th>Tên sơ đồ</th>
+                    <th>Tổng ghế</th>
+                    <th>Số tầng</th>
+                    <th>Danh sách ghế</th>
+                    <th style="width:140px"></th>
+                </tr>
+            </thead>
+            <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td><strong>@item.TenSoDo</strong></td>
+                    <td>@item.TongSoGhe</td>
+                    <td>@item.SoTang</td>
+                    <td style="max-width:260px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--text-muted);font-size:.83rem">
+                        @item.DanhSachGheCsv
+                    </td>
+                    <td>
+                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-outline-primary me-1">
+                            <i class="fa-solid fa-pen-to-square"></i>
+                        </a>
+                        <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-outline-secondary me-1">
+                            <i class="fa-solid fa-eye"></i>
+                        </a>
+                        <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-outline-danger">
+                            <i class="fa-solid fa-trash"></i>
+                        </a>
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+</div>

@@ -1,0 +1,147 @@
+@model WebDatVeXe.ViewModels.ChonGheVM
+@{
+    ViewData["Title"] = "Chọn ghế";
+}
+
+<div class="container" style="padding-top:32px;padding-bottom:48px">
+    <div class="d-flex align-items-center gap-3 mb-4">
+        <a class="btn btn-sm btn-outline-secondary" asp-controller="Home" asp-action="TimChuyen"
+           asp-route-DiemDi="@Model.ChuyenXe.TuyenXe?.DiemDi"
+           asp-route-DiemDen="@Model.ChuyenXe.TuyenXe?.DiemDen">
+            <i class="fa-solid fa-arrow-left me-1"></i>Quay lại
+        </a>
+        <div>
+            <h2 class="mb-0" style="font-size:1.3rem;font-weight:800">Chọn ghế</h2>
+            <div class="text-muted" style="font-size:.85rem;margin-top:2px">
+                <strong>@Model.ChuyenXe.TuyenXe?.DiemDi</strong>
+                <i class="fa-solid fa-arrow-right mx-1" style="color:var(--primary);font-size:.8rem"></i>
+                <strong>@Model.ChuyenXe.TuyenXe?.DiemDen</strong>
+                &nbsp;·&nbsp;<i class="fa-regular fa-clock me-1"></i>@Model.ChuyenXe.ThoiGianKhoiHanh.ToString("HH:mm dd/MM/yyyy")
+                &nbsp;·&nbsp;<span style="color:var(--danger);font-weight:800">@Model.GiaVe.ToString("N0") đ/ghế</span>
+            </div>
+        </div>
+    </div>
+
+    <form asp-controller="Ve" asp-action="DatVe" method="post">
+        @Html.AntiForgeryToken()
+        <input type="hidden" name="ChuyenXeId" value="@Model.ChuyenXe.Id" />
+        <input type="hidden" id="GheChon" name="GheChon" />
+
+        <div class="row g-4">
+            <div class="col-lg-7">
+                <div class="seat-section">
+                    <h6 style="font-weight:800;margin-bottom:16px">
+                        <i class="fa-solid fa-bus me-2" style="color:var(--primary)"></i>Sơ đồ chỗ ngồi
+                    </h6>
+                    <div class="seat-legend">
+                        <div class="seat-legend-item">
+                            <div class="seat-dot empty"></div> Trống
+                        </div>
+                        <div class="seat-legend-item">
+                            <div class="seat-dot selected"></div> Đang chọn
+                        </div>
+                        <div class="seat-legend-item">
+                            <div class="seat-dot taken"></div> Đã đặt
+                        </div>
+                    </div>
+
+                    <div class="text-center mb-3">
+                        <span style="font-size:.72rem;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px">
+                            <i class="fa-solid fa-chevron-up me-1"></i>Đầu xe
+                        </span>
+                    </div>
+
+                    <div class="seat-grid-wrapper">
+                        <div class="seat-grid">
+                            @{
+                                var gheList = Model.TatCaGhe.ToList();
+                                int col = 0;
+                            }
+                            @foreach (var ghe in gheList)
+                            {
+                                var daDat = Model.GheDaDat.Contains(ghe);
+                                if (col == 2)
+                                {
+                                    <div class="seat-btn seat-aisle" aria-hidden="true"></div>
+                                }
+                                <button type="button"
+                                        class="seat-btn @(daDat ? "seat-taken" : "")"
+                                        data-ghe="@ghe"
+                                        @(daDat ? "disabled=\"disabled\"" : "")>@ghe</button>
+                                col = (col + 1) % 4;
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-5">
+                <div class="booking-summary">
+                    <div class="summary-title">
+                        <i class="fa-solid fa-receipt me-2" style="color:var(--primary)"></i>Thông tin đặt vé
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Họ tên *</label>
+                        <input name="HoTen" class="form-control" placeholder="Nhập họ tên đầy đủ" required />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Số điện thoại *</label>
+                        <input name="SoDienThoai" class="form-control" placeholder="0xxx xxx xxx" required />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Email</label>
+                        <input name="Email" type="email" class="form-control" placeholder="email@example.com" />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">
+                            <i class="fa-solid fa-tag me-1" style="color:var(--accent)"></i>Mã voucher
+                        </label>
+                        <input name="MaVoucher" class="form-control" placeholder="VD: WELCOME50" />
+                    </div>
+
+                    <hr style="border-color:var(--border);margin:16px 0" />
+
+                    <div class="summary-row">
+                        <span class="label">Ghế đã chọn</span>
+                        <span class="value" id="gheLabel" style="color:var(--primary)">—</span>
+                    </div>
+                    <div class="summary-row">
+                        <span class="label">Đơn giá</span>
+                        <span class="value">@Model.GiaVe.ToString("N0") đ/ghế</span>
+                    </div>
+                    <div class="summary-row" style="border-top:1.5px solid var(--border);padding-top:12px;margin-top:8px">
+                        <span style="font-weight:800;font-size:.95rem">Tổng tiền</span>
+                        <span id="tongTien" class="summary-total">0 đ</span>
+                    </div>
+
+                    <button type="submit" class="btn btn-warning w-100 mt-4" style="padding:13px;font-size:.95rem">
+                        <i class="fa-solid fa-arrow-right me-2"></i>Tiếp tục thanh toán
+                    </button>
+                    <p class="text-muted text-center mt-2 mb-0" style="font-size:.76rem">
+                        <i class="fa-solid fa-lock me-1"></i>Thông tin được bảo mật tuyệt đối
+                    </p>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+<script>
+var giaVe = @Model.GiaVe;
+var chon = new Set();
+function dinhDang(n) { return n.toLocaleString("vi-VN") + " đ"; }
+document.querySelectorAll(".seat-btn:not(.seat-taken)").forEach(function(btn) {
+    btn.addEventListener("click", function() {
+        var g = btn.dataset.ghe;
+        if (chon.has(g)) { chon.delete(g); btn.classList.remove("seat-selected"); }
+        else { chon.add(g); btn.classList.add("seat-selected"); }
+        var arr = Array.from(chon);
+        document.getElementById("GheChon").value = arr.join(",");
+        document.getElementById("gheLabel").textContent = arr.length ? arr.join(", ") : "—";
+        document.getElementById("tongTien").textContent = dinhDang(arr.length * giaVe);
+    });
+});
+</script>
+}

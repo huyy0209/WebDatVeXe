@@ -1,0 +1,143 @@
+@model WebDatVeXe.Models.Ve
+@{
+    ViewData["Title"] = "Thanh toán";
+}
+
+<div class="container" style="padding-top:32px;padding-bottom:48px">
+    <div class="mb-4">
+        <h2 style="font-size:1.3rem;font-weight:800;margin-bottom:4px">
+            <i class="fa-solid fa-credit-card me-2" style="color:var(--primary)"></i>Xác nhận thanh toán
+        </h2>
+        <div class="text-muted" style="font-size:.85rem">Mã vé: <strong style="color:var(--primary);letter-spacing:1px">@Model.MaVe</strong></div>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-md-6">
+            <div style="background:white;border:1.5px solid var(--border);border-radius:var(--radius);overflow:hidden">
+                <div style="background:var(--primary-light);padding:14px 20px;border-bottom:1px solid var(--border)">
+                    <h6 style="font-weight:800;margin:0;color:var(--primary)">
+                        <i class="fa-solid fa-ticket me-2"></i>Thông tin vé
+                    </h6>
+                </div>
+                <div style="padding:20px 24px">
+                    <div style="font-size:1.05rem;font-weight:800;margin-bottom:14px">
+                        @Model.ChuyenXe?.TuyenXe?.DiemDi
+                        <i class="fa-solid fa-arrow-right mx-2" style="color:var(--primary);font-size:.85rem"></i>
+                        @Model.ChuyenXe?.TuyenXe?.DiemDen
+                    </div>
+
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;font-size:.88rem;margin-bottom:16px">
+                        <div>
+                            <div style="color:var(--text-muted);font-weight:700;font-size:.72rem;text-transform:uppercase;letter-spacing:.4px;margin-bottom:3px">Khởi hành</div>
+                            <div style="font-weight:800">@Model.ChuyenXe?.ThoiGianKhoiHanh.ToString("HH:mm")</div>
+                            <div style="color:var(--text-muted);font-size:.8rem">@Model.ChuyenXe?.ThoiGianKhoiHanh.ToString("dd/MM/yyyy")</div>
+                        </div>
+                        <div>
+                            <div style="color:var(--text-muted);font-weight:700;font-size:.72rem;text-transform:uppercase;letter-spacing:.4px;margin-bottom:3px">Ghế</div>
+                            <div style="font-weight:800;color:var(--primary)">@Model.DanhSachGheCsv</div>
+                        </div>
+                    </div>
+
+                    <hr style="border-color:var(--border);margin:0 0 14px 0" />
+
+                    @if (Model.SoTienGiam > 0)
+                    {
+                        <div class="d-flex justify-content-between align-items-center mb-2" style="font-size:.87rem">
+                            <span style="color:var(--text-muted)">Giá gốc</span>
+                            <span style="font-weight:600;text-decoration:line-through;color:var(--text-muted)">@((Model.TongTien + Model.SoTienGiam).ToString("N0")) đ</span>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center mb-2" style="font-size:.87rem">
+                            <span style="color:var(--success);font-weight:700"><i class="fa-solid fa-tag me-1"></i>Voucher @Model.MaVoucher</span>
+                            <span style="color:var(--success);font-weight:700">-@Model.SoTienGiam.ToString("N0") đ</span>
+                        </div>
+                    }
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span style="font-weight:800;font-size:.95rem">Tổng thanh toán</span>
+                        <span style="font-size:1.4rem;font-weight:800;color:var(--danger)">@Model.TongTien.ToString("N0") đ</span>
+                    </div>
+
+                    @if (Model.HoldExpires.HasValue)
+                    {
+                        <div class="mt-3 p-2 rounded-2 d-flex align-items-center gap-2"
+                             style="background:var(--accent-light);font-size:.82rem;font-weight:600;color:#92400e">
+                            <i class="fa-solid fa-hourglass-half"></i>
+                            Thanh toán trước <strong>@Model.HoldExpires.Value.ToString("HH:mm")</strong>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div style="background:white;border:1.5px solid var(--border);border-radius:var(--radius);overflow:hidden">
+                <div style="background:var(--bg);padding:14px 20px;border-bottom:1px solid var(--border)">
+                    <h6 style="font-weight:800;margin:0">
+                        <i class="fa-solid fa-wallet me-2" style="color:var(--primary)"></i>Phương thức thanh toán
+                    </h6>
+                </div>
+                <div style="padding:20px 24px">
+                    <form asp-action="XacNhanThanhToan" method="post">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="id" value="@Model.Id" />
+
+                        <label class="payment-method-option active">
+                            <input type="radio" name="phuongThuc" value="momo" checked />
+                            <div class="pm-icon" style="background:#fff0f5">🩷</div>
+                            <div>
+                                <div style="font-weight:800;font-size:.9rem">Ví MoMo</div>
+                                <div style="font-size:.78rem;color:var(--text-muted)">Thanh toán qua ví điện tử MoMo</div>
+                            </div>
+                        </label>
+
+                        <label class="payment-method-option">
+                            <input type="radio" name="phuongThuc" value="vnpay" />
+                            <div class="pm-icon" style="background:#fff7ed">💳</div>
+                            <div>
+                                <div style="font-weight:800;font-size:.9rem">VNPay</div>
+                                <div style="font-size:.78rem;color:var(--text-muted)">ATM, Visa, Mastercard, QR Code</div>
+                            </div>
+                        </label>
+
+                        <label class="payment-method-option">
+                            <input type="radio" name="phuongThuc" value="zalopay" />
+                            <div class="pm-icon" style="background:#eff6ff">💙</div>
+                            <div>
+                                <div style="font-weight:800;font-size:.9rem">ZaloPay</div>
+                                <div style="font-size:.78rem;color:var(--text-muted)">Thanh toán qua ứng dụng ZaloPay</div>
+                            </div>
+                        </label>
+
+                        <label class="payment-method-option">
+                            <input type="radio" name="phuongThuc" value="tienmat" />
+                            <div class="pm-icon" style="background:#f0fdf4">💵</div>
+                            <div>
+                                <div style="font-weight:800;font-size:.9rem">Tiền mặt tại quầy</div>
+                                <div style="font-size:.78rem;color:var(--text-muted)">Thanh toán trực tiếp khi lên xe</div>
+                            </div>
+                        </label>
+
+                        <button type="submit" class="btn btn-success w-100 mt-3" style="padding:13px;font-size:.95rem">
+                            <i class="fa-solid fa-check me-2"></i>Xác nhận thanh toán
+                        </button>
+                        <p class="text-muted text-center mt-2 mb-0" style="font-size:.76rem">
+                            <i class="fa-solid fa-shield-halved me-1"></i>Giao dịch được mã hóa và bảo mật
+                        </p>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+<script>
+document.querySelectorAll('.payment-method-option').forEach(function(opt) {
+    var radio = opt.querySelector('input[type=radio]');
+    opt.addEventListener('click', function() {
+        document.querySelectorAll('.payment-method-option').forEach(function(o) { o.classList.remove('active'); });
+        opt.classList.add('active');
+        radio.checked = true;
+    });
+});
+</script>
+}

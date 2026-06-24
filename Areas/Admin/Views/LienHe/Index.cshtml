@@ -1,0 +1,65 @@
+@model IEnumerable<WebDatVeXe.Models.LienHe>
+@{
+    ViewData["Title"] = "Liên hệ";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h2 style="font-weight:800;margin:0">Liên hệ</h2>
+        <p class="text-muted mb-0" style="font-size:.88rem">Tin nhắn liên hệ từ khách hàng</p>
+    </div>
+</div>
+
+<div style="background:white;border:1.5px solid var(--border);border-radius:var(--radius);overflow:hidden">
+    <div style="overflow-x:auto">
+        <table class="table table-hover mb-0">
+            <thead>
+                <tr>
+                    <th>Họ tên</th>
+                    <th>Liên hệ</th>
+                    <th>Tiêu đề</th>
+                    <th>Nội dung</th>
+                    <th>Trạng thái</th>
+                    <th>Ngày gửi</th>
+                    <th style="width:100px"></th>
+                </tr>
+            </thead>
+            <tbody>
+            @foreach (var l in Model)
+            {
+                <tr>
+                    <td><strong>@l.HoTen</strong></td>
+                    <td>
+                        @l.Email<br/>
+                        <small style="color:var(--text-muted)">@l.SoDienThoai</small>
+                    </td>
+                    <td>@l.TieuDe</td>
+                    <td style="max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">@l.NoiDung</td>
+                    <td>
+                        @if (l.TrangThai == WebDatVeXe.Models.TrangThaiLienHe.Resolved)
+                        {
+                            <span style="background:#d1fae5;color:#065f46;padding:3px 10px;border-radius:20px;font-size:.76rem;font-weight:700">Đã xử lý</span>
+                        }
+                        else
+                        {
+                            <span style="background:#fef3c7;color:#92400e;padding:3px 10px;border-radius:20px;font-size:.76rem;font-weight:700">Chờ xử lý</span>
+                        }
+                    </td>
+                    <td style="color:var(--text-muted)">@l.NgayGui.ToString("dd/MM/yyyy")</td>
+                    <td>
+                        @if (l.TrangThai != WebDatVeXe.Models.TrangThaiLienHe.Resolved)
+                        {
+                            <form asp-action="DanhDauXuLy" method="post">
+                                <input type="hidden" name="id" value="@l.Id" />
+                                <button class="btn btn-sm btn-outline-success">
+                                    <i class="fa-solid fa-check"></i>
+                                </button>
+                            </form>
+                        }
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+</div>

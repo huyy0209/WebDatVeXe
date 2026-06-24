@@ -1,0 +1,151 @@
+@model IEnumerable<WebDatVeXe.Models.Ve>
+@{
+    ViewData["Title"] = "Tổng quan";
+}
+
+<div class="row g-3 mb-5">
+    <div class="col-6 col-md-4 col-lg-2">
+        <div class="stat-card">
+            <div class="stat-icon" style="background:#e8f0fe">
+                <i class="fa-solid fa-route" style="color:var(--primary)"></i>
+            </div>
+            <div>
+                <div class="stat-value">@ViewBag.SoTuyen</div>
+                <div class="stat-label">Tuyến xe</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-md-4 col-lg-2">
+        <div class="stat-card">
+            <div class="stat-icon" style="background:#eff6ff">
+                <i class="fa-solid fa-bus" style="color:#3b82f6"></i>
+            </div>
+            <div>
+                <div class="stat-value">@ViewBag.SoXe</div>
+                <div class="stat-label">Xe</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-md-4 col-lg-2">
+        <div class="stat-card">
+            <div class="stat-icon" style="background:#f0fdf4">
+                <i class="fa-regular fa-calendar" style="color:var(--success)"></i>
+            </div>
+            <div>
+                <div class="stat-value">@ViewBag.SoChuyen</div>
+                <div class="stat-label">Chuyến xe</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-md-4 col-lg-2">
+        <div class="stat-card">
+            <div class="stat-icon" style="background:#fef3c7">
+                <i class="fa-solid fa-ticket" style="color:var(--accent-dark)"></i>
+            </div>
+            <div>
+                <div class="stat-value">@ViewBag.SoVe</div>
+                <div class="stat-label">Vé đã bán</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-md-4 col-lg-2">
+        <div class="stat-card">
+            <div class="stat-icon" style="background:#f5f3ff">
+                <i class="fa-solid fa-users" style="color:#7c3aed"></i>
+            </div>
+            <div>
+                <div class="stat-value">@ViewBag.SoKhach</div>
+                <div class="stat-label">Khách hàng</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-md-4 col-lg-2">
+        <div class="stat-card">
+            <div class="stat-icon" style="background:#fce7f3">
+                <i class="fa-solid fa-coins" style="color:#db2777"></i>
+            </div>
+            <div>
+                <div class="stat-value" style="font-size:1.1rem">@(((decimal)ViewBag.DoanhThu).ToString("N0"))</div>
+                <div class="stat-label">Doanh thu (đ)</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-3 mb-5">
+    <div class="col-12">
+        <div style="background:white;border:1.5px solid var(--border);border-radius:var(--radius);padding:20px 24px">
+            <div style="font-weight:800;font-size:.8rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:14px">
+                Truy cập nhanh
+            </div>
+            <div class="d-flex gap-2 flex-wrap">
+                <a class="btn btn-sm btn-primary" asp-area="Admin" asp-controller="ChuyenXe" asp-action="Create">
+                    <i class="fa-solid fa-plus me-1"></i>Thêm chuyến xe
+                </a>
+                <a class="btn btn-sm btn-outline-primary" asp-area="Admin" asp-controller="TuyenXe" asp-action="Create">
+                    <i class="fa-solid fa-plus me-1"></i>Thêm tuyến
+                </a>
+                <a class="btn btn-sm btn-outline-primary" asp-area="Admin" asp-controller="Voucher" asp-action="Create">
+                    <i class="fa-solid fa-plus me-1"></i>Thêm voucher
+                </a>
+                <a class="btn btn-sm btn-outline-secondary" asp-area="Admin" asp-controller="Ve" asp-action="Index">
+                    <i class="fa-solid fa-list me-1"></i>Tất cả vé
+                </a>
+                <a class="btn btn-sm btn-outline-secondary" asp-area="Admin" asp-controller="KhachHang" asp-action="Index">
+                    <i class="fa-solid fa-users me-1"></i>Khách hàng
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div style="background:white;border:1.5px solid var(--border);border-radius:var(--radius);overflow:hidden">
+    <div style="padding:16px 24px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center">
+        <h6 style="font-weight:800;margin:0">
+            <i class="fa-solid fa-clock-rotate-left me-2" style="color:var(--primary)"></i>Vé đặt gần đây
+        </h6>
+        <a class="btn btn-sm btn-outline-primary" asp-area="Admin" asp-controller="Ve" asp-action="Index">
+            Xem tất cả <i class="fa-solid fa-arrow-right ms-1"></i>
+        </a>
+    </div>
+    <div style="overflow-x:auto">
+        <table class="table table-hover mb-0">
+            <thead>
+                <tr>
+                    <th>Mã vé</th><th>Tuyến</th><th>Ghế</th><th>Tổng tiền</th><th>Trạng thái</th><th>Ngày đặt</th>
+                </tr>
+            </thead>
+            <tbody>
+            @foreach (var v in Model)
+            {
+                var (bg, fg) = v.TrangThai switch {
+                    WebDatVeXe.Models.TrangThaiVe.Hold => ("#fef3c7", "#92400e"),
+                    WebDatVeXe.Models.TrangThaiVe.Paid => ("#d1fae5", "#065f46"),
+                    WebDatVeXe.Models.TrangThaiVe.Completed => ("#e0e7ff", "#4338ca"),
+                    WebDatVeXe.Models.TrangThaiVe.Cancelled => ("#fee2e2", "#991b1b"),
+                    _ => ("#f3f4f6", "#374151")
+                };
+                var statusText = v.TrangThai switch {
+                    WebDatVeXe.Models.TrangThaiVe.Hold => "Chờ TT",
+                    WebDatVeXe.Models.TrangThaiVe.Paid => "Đã TT",
+                    WebDatVeXe.Models.TrangThaiVe.Completed => "Hoàn thành",
+                    WebDatVeXe.Models.TrangThaiVe.Cancelled => "Đã huỷ",
+                    _ => v.TrangThai.ToString()
+                };
+                <tr>
+                    <td><strong style="color:var(--primary);letter-spacing:.5px">@v.MaVe</strong></td>
+                    <td>@(v.ChuyenXe?.TuyenXe?.DiemDi) <i class="fa-solid fa-arrow-right mx-1" style="color:var(--primary);font-size:.72rem"></i> @(v.ChuyenXe?.TuyenXe?.DiemDen)</td>
+                    <td>@v.DanhSachGheCsv</td>
+                    <td style="font-weight:700;color:var(--danger)">@v.TongTien.ToString("N0") đ</td>
+                    <td>
+                        <span style="background:@bg;color:@fg;padding:3px 10px;border-radius:20px;font-size:.76rem;font-weight:700">
+                            @statusText
+                        </span>
+                    </td>
+                    <td style="color:var(--text-muted)">@v.NgayDat.ToString("HH:mm dd/MM")</td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+</div>
