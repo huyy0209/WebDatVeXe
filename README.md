@@ -95,3 +95,6 @@ dotnet run --profile http
 
 `ApplicationUser` · `TuyenXe`──`DiemDungXe` · `SoDoGhe`──`Xe`──`ChuyenXe`
 `ChuyenXe`──`Ve`──`HoaDon` · `Voucher`──`VoucherTuyenXe` · `DanhGia` · `ThongBao` · `LienHe` · `SupportTicket`
+
+---
+*Cập nhật bởi Quân*
